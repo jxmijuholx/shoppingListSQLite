@@ -1,108 +1,99 @@
 import React, { useEffect, useState } from 'react';
-import { Button, FlatList, StyleSheet, Text, TextInput, View } from 'react-native';
+import { FlatList, StyleSheet, View } from 'react-native';
+import { Button, Icon, Input, ListItem, Text } from 'react-native-elements';
 import { deleteItem, fetchItems, initDatabase, insertItem } from './database';
 
-interface ShoppingItem
-{
-  id: number
-  product: string
-  amount: string
+interface ShoppingItem {
+  id: number;
+  product: string;
+  amount: string;
 }
 
 export default function App() {
-  const [items, setItems] = useState<ShoppingItem[]>([])
-  const [product, setProduct] = useState('')
-  const [amount, setAmount] = useState('')
+  const [items, setItems] = useState<ShoppingItem[]>([]);
+  const [product, setProduct] = useState('');
+  const [amount, setAmount] = useState('');
 
-  useEffect(() =>
-  {
-      initDatabase()
-      refreshList()
-  },
-  []
-  )
+  useEffect(() => {
+    initDatabase();
+    refreshList();
+  }, []);
+
   const refreshList = () => {
     fetchItems(setItems);
   };
 
-  const handleAddItem = () =>
-  {
-    if (product && amount)
-    {
-      insertItem(product,amount)
-      setProduct('')
-      setAmount('')
-      refreshList()
+  const handleAddItem = () => {
+    if (product && amount) {
+      insertItem(product, amount);
+      setProduct('');
+      setAmount('');
+      refreshList();
     }
-  }
+  };
 
   const handleDeleteItem = (id: number) => {
-    deleteItem(id); 
+    deleteItem(id);
     refreshList();
-};
-
-
+  };
 
   return (
-      <View style={styles.container}>
-        <TextInput
+    <View style={styles.container}>
+      <Input
         placeholder="Product"
-        style={styles.input}
         onChangeText={setProduct}
         value={product}
-
-        />
-        <TextInput
+        containerStyle={styles.input}
+      />
+      <Input
         placeholder="Amount"
-        style={styles.input}
         onChangeText={setAmount}
         value={amount}
         keyboardType="numeric"
-        />
-      <Button
-        title="Save" onPress={handleAddItem}
+        containerStyle={styles.input}
       />
-      <Text style={styles.heading}>SHOPPING LIST &lt;3</Text>
+      <Button
+        title="Save"
+        onPress={handleAddItem}
+        buttonStyle={styles.button}
+      />
+      <Text h4 style={styles.heading}>SHOPPING LIST </Text>
       <FlatList
         data={items}
         renderItem={({ item }) => (
-          <View style={styles.listItem}>
-            <Text>{`${item.product}, ${item.amount}`}</Text>
-            <Button title="Bought" onPress={() => handleDeleteItem(item.id)} />
-          </View>
+          <ListItem bottomDivider>
+            <ListItem.Content>
+              <ListItem.Title>{`${item.product}, ${item.amount}`}</ListItem.Title>
+            </ListItem.Content>
+            <Icon
+              name="check"
+              type="feather"
+              onPress={() => handleDeleteItem(item.id)}
+            />
+          </ListItem>
         )}
         keyExtractor={item => item.id.toString()}
       />
-      </View>
-    );
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginTop: 50,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   input: {
-    height: 40,
-    margin: 12,
-    borderWidth: 1,
-    padding: 10,
-    width: '80%',
+    marginHorizontal: 10,
+    marginTop: 10,
   },
-  listItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    width: '80%',
-    marginVertical: 5,
-  },heading: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: 'blue',
-    width: '80%',
-    margin: 30,
-    alignContent: 'center'
+  button: {
+    width: '90%',
+    alignSelf: 'center',
+    marginTop: 10,
+  },
+  heading: {
+    textAlign: 'center',
+    marginVertical: 20,
   }
 });
