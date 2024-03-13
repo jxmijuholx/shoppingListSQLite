@@ -53,10 +53,16 @@ export default function App() {
         containerStyle={styles.input}
       />
       <Button
-        title="Save"
-        onPress={handleAddItem}
-        buttonStyle={styles.button}
-      />
+  title="Save"
+  onPress={handleAddItem}
+  buttonStyle={styles.button}
+  icon={{
+    name: 'save',
+    type: 'font-awesome', 
+    size: 20,
+    color: 'white',
+  }}
+/>
       <Text h4 style={styles.heading}>SHOPPING LIST </Text>
       <FlatList
         data={items}
